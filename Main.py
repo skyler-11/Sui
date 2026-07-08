@@ -304,7 +304,7 @@ def render_sidebar() -> None:
                     f"Version `{_APP_VERSION}`  \n\n"
                     f"14-day workforce schedule validator that flags rule "
                     f"violations and exports HR-ready reports.  \n\n"
-                    f"**Support:** https://calpionsweb.automotive-wan.com:8091/"
+                    f"**Support:** https://support.example.com/"
                 )
             return
 
@@ -630,7 +630,7 @@ def render_sidebar() -> None:
                 f"violations and exports HR-ready reports.  \n\n"
                 # PLACEHOLDER: replace with the real distribution-list / Teams
                 # channel before the production cut.
-                f"**Support:** https://calpionsweb.automotive-wan.com:8091/"
+                f"**Support:** https://support.example.com/"
             )
 
 
