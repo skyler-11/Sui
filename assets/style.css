@@ -1,0 +1,1933 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   Manning Simulator — Global Stylesheet (v2.0)
+   ----------------------------------------------------------------------------
+   AUMOVIO Brand (#F24713) · Dual-mode (light + dark) · WCAG 2.1 AA
+   ----------------------------------------------------------------------------
+   Architecture:
+     1. Token layer (--c-*, --space-*, --shadow-*, --motion-*)
+        - Two complete sets: :root[data-theme="light"] and ="dark".
+        - Body class .theme-light / .theme-dark mirrors the same selector.
+     2. Reset & a11y foundation (skip-link, focus-visible, reduced-motion).
+     3. Streamlit chrome overrides (page, sidebar, tabs, metrics, buttons,
+        inputs, dataframe, expander, alerts, tables, toast, scrollbar).
+     4. Component classes (ms-*) consumed by app/ui.py.
+   Maintain in this order — placing component rules after chrome lets them
+   inherit the same tokens without specificity wars.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+
+/* ╔═══ 1. TOKEN LAYER ═══════════════════════════════════════════════════╗ */
+
+/* ── Light theme (default) ─────────────────────────────────────────────── */
+:root,
+:root[data-theme="light"] {
+    /* Surfaces — warm cream tint (Clay-inspired). Cool slate retired for a
+       cream canvas + dark-navy ink palette; subtler than Clay's #fffaf0 to
+       stay professional and keep AA. Warming the bg only raises text contrast. */
+    --c-bg:              #fcf9f4;
+    --c-bg-2:            #f5f0e8;
+    --c-bg-3:            #fef5f3;
+    --c-surface:         #fffdf9;
+    --c-surface-2:       #faf6ef;
+    --c-overlay:         rgba(15, 23, 42, 0.42);
+
+    /* Borders */
+    --c-border:          #e8ddd9;
+    --c-border-strong:   #d4c4be;
+    --c-border-subtle:   #f0eadf;
+
+    /* Text — all contrast-checked against --c-bg / --c-surface */
+    --c-text:            #0f172a;  /* 16.5:1 on #f8fafc ✓ AAA */
+    --c-text-secondary:  #475569;  /* 7.4:1  ✓ AAA */
+    --c-text-muted:      #64748b;  /* 5.1:1  ✓ AA  (raised from #94a3b8) */
+    --c-text-inverse:    #ffffff;
+
+    /* Brand accent */
+    --c-accent:          #f24713;
+    --c-accent-hover:    #cd3c10;
+    --c-accent-active:   #a82e08;
+    --c-accent-light:    rgba(242, 71, 19, 0.08);
+    --c-accent-mid:      rgba(242, 71, 19, 0.18);
+    --c-accent-ring:     rgba(242, 71, 19, 0.35);
+    --c-accent-on-bg:    #c43a10;  /* accent text on light bg ≥4.5:1 */
+
+    /* Severity (AA-paired bg/text) */
+    --c-valid-bg:        #f0fdf4;
+    --c-valid-border:    #bbf7d0;
+    --c-valid-text:      #166534;
+    --c-valid-strong:    #15803d;
+
+    --c-invalid-bg:      #fef2f2;
+    --c-invalid-border:  #fecaca;
+    --c-invalid-text:    #991b1b;
+    --c-invalid-strong:  #b91c1c;
+
+    --c-warn-bg:         #fffbeb;
+    --c-warn-border:     #fde68a;
+    --c-warn-text:       #92400e;
+    --c-warn-strong:     #b45309;
+
+    --c-info-bg:         #eff6ff;
+    --c-info-border:     #bfdbfe;
+    --c-info-text:       #1e40af;
+    --c-info-strong:     #1d4ed8;
+
+    /* Shadow scale — soft, airy, warm-tinted (Clay leans on color contrast for
+       depth, not heavy shadows). Warm brown-grey tint cohesive with the cream
+       canvas; lower alpha than the old cool-slate set. */
+    --shadow-xs: 0 1px 2px rgba(40, 30, 20, 0.04);
+    --shadow-sm: 0 1px 3px rgba(40, 30, 20, 0.06), 0 1px 2px rgba(40, 30, 20, 0.03);
+    --shadow-md: 0 4px 14px rgba(40, 30, 20, 0.07), 0 2px 4px rgba(40, 30, 20, 0.04);
+    --shadow-lg: 0 14px 32px rgba(40, 30, 20, 0.10), 0 4px 10px rgba(40, 30, 20, 0.05);
+    --shadow-focus: 0 0 0 3px var(--c-accent-ring);
+
+    /* Radius scale — generous Clay-style rounding. Shared globally (the dark
+       block does not redefine these), so dark inherits the same friendly radii. */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-pill: 999px;
+
+    /* Spacing (4-pt grid) */
+    --space-1: 0.25rem;  /* 4  */
+    --space-2: 0.5rem;   /* 8  */
+    --space-3: 0.75rem;  /* 12 */
+    --space-4: 1rem;     /* 16 */
+    --space-5: 1.25rem;  /* 20 */
+    --space-6: 1.5rem;   /* 24 */
+    --space-8: 2rem;     /* 32 */
+    --space-10: 2.5rem;  /* 40 */
+
+    /* Motion */
+    --motion-fast: 120ms;
+    --motion-med:  200ms;
+    --motion-slow: 320ms;
+    --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Typography — rounded display face (Clay's warm display voice). Rajdhani
+       kept in the fallback stack so headings degrade to the prior look if Baloo 2
+       fails to load. */
+    --font-display: 'Baloo 2', 'Rajdhani', 'Segoe UI', sans-serif;
+    --font-body:    'Inter', 'Segoe UI', system-ui, sans-serif;
+    --font-mono:    ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+    color-scheme: light;
+}
+
+
+/* ── Dark theme ─────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] {
+    /* Surfaces — slate scale tuned for OLED-ish readability without going
+       pitch black (pure black creates excess accent flare for our orange). */
+    --c-bg:              #0b1220;
+    --c-bg-2:            #0f172a;
+    --c-bg-3:            #1a1228;
+    --c-surface:         #131c2e;
+    --c-surface-2:       #1a2336;
+    --c-overlay:         rgba(0, 0, 0, 0.6);
+
+    /* Borders */
+    --c-border:          #25304a;
+    --c-border-strong:   #354260;
+    --c-border-subtle:   #1c2640;
+
+    /* Text — all checked against --c-bg / --c-surface */
+    --c-text:            #f1f5f9;  /* 15.4:1 on #0b1220 ✓ AAA */
+    --c-text-secondary:  #cbd5e1;  /* 9.8:1  ✓ AAA */
+    --c-text-muted:      #94a3b8;  /* 5.6:1  ✓ AA  */
+    --c-text-inverse:    #0b1220;
+
+    /* Brand accent — pure #f24713 dips below AA against dark slate when used
+       as *text*. Fills are fine. Use --c-accent-on-bg for text on dark. */
+    --c-accent:          #f24713;
+    --c-accent-hover:    #ff5d2b;
+    --c-accent-active:   #ff7a52;
+    --c-accent-light:    rgba(242, 71, 19, 0.15);
+    --c-accent-mid:      rgba(242, 71, 19, 0.28);
+    --c-accent-ring:     rgba(255, 107, 61, 0.5);
+    --c-accent-on-bg:    #ff8a5c;  /* 4.7:1 on #0b1220 ✓ AA */
+
+    /* Severity — dark-mode pairs verified for ≥4.5:1 text/bg */
+    --c-valid-bg:        #0a2418;
+    --c-valid-border:    #14532d;
+    --c-valid-text:      #86efac;
+    --c-valid-strong:    #4ade80;
+
+    --c-invalid-bg:      #2a1212;
+    --c-invalid-border:  #7f1d1d;
+    --c-invalid-text:    #fca5a5;
+    --c-invalid-strong:  #f87171;
+
+    --c-warn-bg:         #2a1f04;
+    --c-warn-border:     #78350f;
+    --c-warn-text:       #fcd34d;
+    --c-warn-strong:     #fbbf24;
+
+    --c-info-bg:         #0c1a3a;
+    --c-info-border:     #1e3a8a;
+    --c-info-text:       #93c5fd;
+    --c-info-strong:     #60a5fa;
+
+    /* Shadows — heavier so cards still pop on dark surface */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.30);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.20);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.25);
+    --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.30);
+    --shadow-focus: 0 0 0 3px var(--c-accent-ring);
+
+    color-scheme: dark;
+}
+
+
+/* ╔═══ 2. RESET & A11Y FOUNDATION ═══════════════════════════════════════╗ */
+
+html, body {
+    /* No more `overflow: clip` — that locked the layout under zoom. Only
+       suppress horizontal overflow now, vertical can scroll naturally. */
+    overflow-x: clip;
+    min-height: 100vh;
+    margin: 0;
+    font-family: var(--font-body);
+    background: var(--c-bg) !important;
+    color: var(--c-text) !important;
+    transition: background var(--motion-med) var(--motion-ease),
+                color var(--motion-med) var(--motion-ease);
+}
+
+/* Skip-link — visually hidden until keyboard-focused. */
+.ms-skip-link {
+    position: fixed;
+    top: -100px;
+    left: var(--space-2);
+    z-index: 9999;
+    background: var(--c-accent);
+    color: var(--c-text-inverse);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    box-shadow: var(--shadow-md);
+    transition: top var(--motion-fast) var(--motion-ease);
+}
+.ms-skip-link:focus,
+.ms-skip-link:focus-visible {
+    top: var(--space-2);
+    outline: 2px solid var(--c-text-inverse);
+    outline-offset: 2px;
+}
+
+/* Global focus-visible — never strip focus without replacing it. */
+*:focus-visible {
+    outline: none !important;
+    box-shadow: var(--shadow-focus) !important;
+    border-radius: var(--radius-sm);
+}
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+    outline: none !important;
+    box-shadow: var(--shadow-focus) !important;
+}
+
+
+/* ╔═══ 3. STREAMLIT CHROME OVERRIDES ════════════════════════════════════╗ */
+
+[data-testid="stAppViewContainer"] {
+    min-height: 100vh;
+    background: var(--c-bg) !important;
+}
+
+[data-testid="stAppViewContainer"] > .main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--c-bg) !important;
+}
+
+.block-container {
+    flex: 1;
+    padding-top: var(--space-6) !important;
+    padding-bottom: var(--space-4) !important;
+    padding-left: var(--space-8) !important;
+    padding-right: var(--space-8) !important;
+    max-width: 100% !important;
+    background: var(--c-bg);
+}
+
+[data-testid="stHeader"] {
+    background: transparent !important;
+    height: auto !important;
+    min-height: 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+/* Sidebar expand / collapse button — never hide; users must be able to
+   reopen the sidebar after collapsing. */
+[data-testid="stExpandSidebarButton"],
+[data-testid="stHeader"] [data-testid="stSidebarCollapseButton"],
+[data-testid="stHeader"] button[kind="headerNoPadding"],
+[data-testid="stSidebar"] [data-testid="stSidebarCollapseButton"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+[data-testid="stExpandSidebarButton"] svg {
+    color: var(--c-text-secondary) !important;
+    fill: var(--c-text-secondary) !important;
+    opacity: 1 !important;
+}
+
+[data-testid="stDecoration"] {
+    display: none !important;
+}
+
+[data-testid="stToolbar"] {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+
+/* ── Dialog / modal (st.dialog) ──────────────────────────────────────────
+   st.dialog is a BaseWeb Modal. data-testid="stDialog" sits on the *overlay
+   Root* (already dark via Streamlit's darkenedBgMix25), so we must NOT retint
+   it — only the inner box leaks white. The box is the BaseWeb Dialog, carrying
+   role="dialog" + aria-modal. Theme that box; leave the backdrop alone. */
+[data-testid="stDialog"] [role="dialog"],
+[data-testid="stDialog"] [aria-modal="true"],
+[data-baseweb="modal"] [role="dialog"] {
+    background: var(--c-surface) !important;
+    color: var(--c-text) !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Dialog body copy + headings read on the dark surface. */
+div[role="dialog"][aria-modal="true"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stDialog"] [data-testid="stMarkdownContainer"] p {
+    color: var(--c-text) !important;
+}
+
+/* Close ("×") button glyph. */
+div[role="dialog"][aria-modal="true"] button[aria-label="Close"],
+[data-testid="stDialog"] button[aria-label="Close"] {
+    color: var(--c-text-secondary) !important;
+}
+div[role="dialog"][aria-modal="true"] button[aria-label="Close"] svg,
+[data-testid="stDialog"] button[aria-label="Close"] svg {
+    fill: var(--c-text-secondary) !important;
+    color: var(--c-text-secondary) !important;
+}
+
+
+/* ── Typography ──────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--c-text) !important;
+}
+
+h1 {
+    font-family: var(--font-display) !important;
+    font-size: 1.9rem !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em;
+    padding-top: 0 !important;
+    margin-bottom: var(--space-1) !important;
+}
+
+h2 {
+    font-family: var(--font-body) !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    padding-top: 0 !important;
+    margin-bottom: var(--space-2) !important;
+}
+
+h3 {
+    font-family: var(--font-body) !important;
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    color: var(--c-text-secondary) !important;
+    padding-top: 0 !important;
+    margin-bottom: var(--space-2) !important;
+}
+
+[data-testid="stCaptionContainer"] p,
+.stCaption {
+    color: var(--c-text-muted) !important;
+    font-size: 0.78rem !important;
+}
+
+hr {
+    border: none !important;
+    border-top: 1px solid var(--c-border) !important;
+    margin-top: var(--space-3) !important;
+    margin-bottom: var(--space-3) !important;
+}
+
+a {
+    color: var(--c-accent-on-bg);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+a:hover { color: var(--c-accent-hover); }
+
+
+/* ── Sidebar ─────────────────────────────────────────────────────────── */
+[data-testid="stSidebar"] {
+    background: var(--c-surface) !important;
+    border-right: 1px solid var(--c-border) !important;
+    box-shadow: var(--shadow-sm);
+}
+
+[data-testid="stSidebar"] .block-container {
+    padding-top: var(--space-5) !important;
+    padding-left: var(--space-4) !important;
+    padding-right: var(--space-4) !important;
+    background: var(--c-surface);
+}
+
+/* Legacy sidebar headers (st.header / st.subheader). Tone them down —
+   the new ms-sidesection helper is the preferred path going forward. */
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--c-text-secondary) !important;
+    margin-top: var(--space-4) !important;
+    margin-bottom: var(--space-2) !important;
+}
+
+[data-testid="stSidebar"] p {
+    color: var(--c-text-secondary) !important;
+    font-size: 0.84rem !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] {
+    background: var(--c-bg-2) !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-sm) !important;
+    margin-bottom: var(--space-1);
+    box-shadow: none;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] summary {
+    color: var(--c-text-secondary) !important;
+    font-size: 0.83rem !important;
+    font-weight: 500 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stExpander"] summary:hover {
+    color: var(--c-accent-on-bg) !important;
+}
+
+
+/* ── Tabs ─────────────────────────────────────────────────────────────── */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 2px;
+    background: var(--c-bg-2);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    padding: 4px 4px 0 4px;
+    border-bottom: 2px solid var(--c-border);
+    margin-bottom: 0 !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: transparent !important;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0 !important;
+    padding: 7px 20px !important;
+    font-size: 0.83rem !important;
+    font-weight: 500 !important;
+    color: var(--c-text-muted) !important;
+    border: 1px solid transparent !important;
+    border-bottom: none !important;
+    transition: color var(--motion-fast) var(--motion-ease),
+                background var(--motion-fast) var(--motion-ease);
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    color: var(--c-accent-on-bg) !important;
+    background: var(--c-accent-light) !important;
+}
+
+.stTabs [aria-selected="true"] {
+    background: var(--c-surface) !important;
+    color: var(--c-accent-on-bg) !important;
+    border-color: var(--c-border) !important;
+    border-bottom-color: var(--c-surface) !important;
+    font-weight: 600 !important;
+    margin-bottom: -2px;
+}
+
+
+/* ── Metrics ─────────────────────────────────────────────────────────── */
+[data-testid="stHorizontalBlock"] {
+    align-items: stretch !important;
+}
+
+[data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+[data-testid="stMetric"] {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-4) !important;
+    box-shadow: var(--shadow-sm);
+    flex: 1 !important;
+    height: 100% !important;
+    min-height: 108px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start;
+    gap: 2px;
+    transition: transform var(--motion-fast) var(--motion-ease),
+                box-shadow var(--motion-fast) var(--motion-ease);
+}
+
+[data-testid="stMetric"]:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+/* Value/label colours target the testid element AND its descendants: in dark
+   mode Streamlit's light native theme colours the inner text node directly, so
+   colouring only the wrapper left the number reading dark-on-dark (the
+   unreadable KPI cards). The descendant override pins both. */
+[data-testid="stMetricLabel"],
+[data-testid="stMetricLabel"] * {
+    color: var(--c-text-muted) !important;
+}
+[data-testid="stMetricLabel"] p {
+    font-size: 0.70rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+[data-testid="stMetricValue"],
+[data-testid="stMetricValue"] * {
+    color: var(--c-text) !important;
+}
+[data-testid="stMetricValue"] {
+    font-family: var(--font-display) !important;
+    font-size: 2rem !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+
+[data-testid="stMetricDelta"] {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+/* `delta_color="off"` deltas render with Streamlit's light-theme faded grey
+   (rgba(49,51,63,.6)) → near-invisible on dark. Streamlit 1.55 renders an
+   arrow svg for EVERY delta (off included), and gives off vs semantic deltas
+   no structural difference — only colour — so there's no selector that isolates
+   the faded ones. Make ALL delta text readable in DARK mode only; light mode
+   keeps Streamlit's native (already-legible) colours. Descendants are targeted
+   because the text is a child StreamlitMarkdown <p> that carries its own colour
+   (same gotcha as radio labels). */
+:root[data-theme="dark"] [data-testid="stMetricDelta"],
+:root[data-theme="dark"] [data-testid="stMetricDelta"] * {
+    color: var(--c-text-muted) !important;
+}
+
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+/* Cover both legacy data-testid and the post-Streamlit-1.39 kind=primary. */
+[data-testid="baseButton-primary"],
+button[kind="primary"] {
+    background: var(--c-accent) !important;
+    border: 1px solid var(--c-accent) !important;
+    border-radius: var(--radius-sm) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    font-size: 0.84rem !important;
+    letter-spacing: 0.01em;
+    box-shadow: var(--shadow-sm);
+    transition: background var(--motion-fast) var(--motion-ease),
+                box-shadow var(--motion-fast) var(--motion-ease),
+                transform var(--motion-fast) var(--motion-ease);
+}
+
+[data-testid="baseButton-primary"]:hover,
+button[kind="primary"]:hover {
+    background: var(--c-accent-hover) !important;
+    border-color: var(--c-accent-hover) !important;
+    box-shadow: var(--shadow-md) !important;
+    transform: translateY(-1px);
+}
+
+[data-testid="baseButton-primary"]:active,
+button[kind="primary"]:active {
+    background: var(--c-accent-active) !important;
+    transform: translateY(0);
+}
+
+[data-testid="baseButton-secondary"],
+button[kind="secondary"] {
+    background: var(--c-surface) !important;
+    border: 1px solid var(--c-border-strong) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--c-text-secondary) !important;
+    font-size: 0.83rem !important;
+    font-weight: 500 !important;
+    box-shadow: var(--shadow-xs);
+    transition: background var(--motion-fast) var(--motion-ease),
+                color var(--motion-fast) var(--motion-ease),
+                border-color var(--motion-fast) var(--motion-ease);
+}
+
+[data-testid="baseButton-secondary"]:hover,
+button[kind="secondary"]:hover {
+    background: var(--c-accent-light) !important;
+    border-color: var(--c-accent) !important;
+    color: var(--c-accent-on-bg) !important;
+}
+
+[data-testid="baseButton-primary"]:disabled,
+[data-testid="baseButton-secondary"]:disabled,
+button[kind="primary"]:disabled,
+button[kind="secondary"]:disabled {
+    opacity: 0.40 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+
+/* ── File uploader ───────────────────────────────────────────────────── */
+[data-testid="stFileUploader"] section {
+    background: var(--c-surface) !important;
+    border: 1.5px dashed var(--c-border-strong) !important;
+    border-radius: var(--radius-md) !important;
+    transition: border-color var(--motion-med) var(--motion-ease),
+                background var(--motion-med) var(--motion-ease);
+}
+
+[data-testid="stFileUploader"] section:hover {
+    border-color: var(--c-accent) !important;
+    background: var(--c-accent-light) !important;
+}
+
+[data-testid="stFileUploader"] p,
+[data-testid="stFileUploader"] small {
+    color: var(--c-text-secondary) !important;
+    font-size: 0.85rem !important;
+}
+
+
+/* ── Inputs ──────────────────────────────────────────────────────────── */
+/* BaseWeb wraps the <input> in a div that carries the visible background and
+   border. Colouring only the inner <input> leaves that wrapper light in dark
+   mode (the white boxes), so the wrapper is themed here and the inner field
+   is made transparent so the wrapper's surface shows through. */
+[data-testid="stTextInput"] [data-baseweb="input"],
+[data-testid="stTextInput"] [data-baseweb="base-input"],
+[data-testid="stNumberInput"] [data-baseweb="input"],
+[data-testid="stNumberInput"] [data-baseweb="base-input"],
+[data-testid="stDateInput"] [data-baseweb="input"],
+[data-testid="stDateInput"] [data-baseweb="base-input"],
+[data-testid="stTextArea"] [data-baseweb="textarea"] {
+    background: var(--c-surface) !important;
+    border: 1px solid var(--c-border-strong) !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+[data-testid="stTextInput"] input,
+[data-testid="stNumberInput"] input,
+[data-testid="stDateInput"] input,
+[data-testid="stTextArea"] textarea {
+    background: transparent !important;
+    border: none !important;
+    color: var(--c-text) !important;
+    font-size: 0.85rem !important;
+}
+
+[data-testid="stTextInput"] input::placeholder,
+[data-testid="stNumberInput"] input::placeholder,
+[data-testid="stDateInput"] input::placeholder,
+[data-testid="stTextArea"] textarea::placeholder {
+    color: var(--c-text-muted) !important;
+    opacity: 1;  /* Firefox dims placeholders by default */
+}
+
+[data-testid="stTextInput"] [data-baseweb="input"]:focus-within,
+[data-testid="stNumberInput"] [data-baseweb="input"]:focus-within,
+[data-testid="stDateInput"] [data-baseweb="input"]:focus-within,
+[data-testid="stTextArea"] [data-baseweb="textarea"]:focus-within {
+    border-color: var(--c-accent) !important;
+    box-shadow: var(--shadow-focus) !important;
+    outline: none;
+}
+
+/* Number-input +/- steppers. The glyphs are SVGs with fill="currentColor", so
+   they're invisible on dark until the button's text colour is themed. */
+[data-testid="stNumberInputStepUp"],
+[data-testid="stNumberInputStepDown"] {
+    color: var(--c-text-secondary) !important;
+    background: var(--c-surface) !important;
+    border-color: var(--c-border-strong) !important;
+}
+[data-testid="stNumberInputStepUp"]:hover,
+[data-testid="stNumberInputStepDown"]:hover {
+    color: var(--c-accent-on-bg) !important;
+    background: var(--c-accent-light) !important;
+}
+
+/* Date-picker calendar popover (BaseWeb datepicker) — unstyled by default,
+   so it renders on a white sheet in dark mode. The white we see is the
+   POPOVER PANEL wrapping the calendar (the calendar itself can be
+   transparent), and that panel was only themed for selectbox listboxes below
+   — a datepicker popover carries no listbox, so it slipped through.
+
+   The calendar surface itself (plain selectors — universally supported). */
+[data-baseweb="calendar"],
+[data-baseweb="calendar"] [data-baseweb="calendar-header"],
+[data-baseweb="calendar"] [role="grid"] {
+    background-color: var(--c-surface) !important;
+    color: var(--c-text) !important;
+}
+/* The floating wrapper that contains the calendar. Streamlit 1.55 has NO
+   data-baseweb="popover" (the previous rule targeted that and matched nothing),
+   so target the calendar's *direct parent* via :has() — that parent is the
+   white layer the calendar floats on. Kept in its own rule so an unsupported
+   :has() parser only drops this line, not the plain calendar rules above. */
+*:has(> [data-baseweb="calendar"]) {
+    background-color: var(--c-surface) !important;
+    color: var(--c-text) !important;
+}
+/* Month / year header controls inside the calendar header. */
+[data-baseweb="calendar"] [data-baseweb="calendar-header"] button,
+[data-baseweb="calendar"] [data-baseweb="calendar-header"] [data-baseweb="select"] > div:first-child {
+    background-color: var(--c-surface) !important;
+    color: var(--c-text) !important;
+}
+[data-baseweb="calendar"] [role="gridcell"] {
+    color: var(--c-text) !important;
+}
+/* Days outside the current month / disabled days — keep them dimmed but
+   legible rather than the near-black native default on the dark surface. */
+[data-baseweb="calendar"] [role="gridcell"][aria-disabled="true"] {
+    color: var(--c-text-muted) !important;
+}
+[data-baseweb="calendar"] [role="gridcell"]:hover {
+    background-color: var(--c-accent-light) !important;
+}
+[data-baseweb="calendar"] [aria-selected="true"] {
+    background-color: var(--c-accent) !important;
+    color: var(--c-text-inverse) !important;
+}
+
+/* Widget labels (the text above inputs/date pickers) — keep them at AA
+   contrast on dark instead of the faint default. */
+[data-testid="stWidgetLabel"],
+[data-testid="stWidgetLabel"] p,
+[data-testid="stWidgetLabel"] label {
+    color: var(--c-text-secondary) !important;
+}
+
+
+/* ── Select / multiselect ────────────────────────────────────────────── */
+[data-baseweb="select"] > div:first-child,
+[data-baseweb="multi-select"] > div:first-child {
+    background: var(--c-surface) !important;
+    border: 1px solid var(--c-border-strong) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--c-text) !important;
+}
+
+[data-baseweb="menu"] {
+    background: var(--c-surface) !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-sm) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+[data-baseweb="menu"] li {
+    color: var(--c-text) !important;
+    font-size: 0.84rem !important;
+}
+
+[data-baseweb="menu"] li:hover {
+    background: var(--c-accent-light) !important;
+    color: var(--c-accent-on-bg) !important;
+}
+
+/* Portal surfaces — selectbox/multiselect dropdowns and st.popover bodies are
+   rendered in a detached portal themed from Streamlit's light base, so they
+   appear as a white sheet on dark. Re-skin the panel and its options.
+   The visible white is the floating WRAPPER around stPopoverBody (Streamlit
+   1.55 has no data-baseweb="popover" attr to hook), so theme that parent via
+   :has() — the same proven pattern used for the date-picker calendar. */
+[data-testid="stPopoverBody"],
+*:has(> [data-testid="stPopoverBody"]),
+[data-baseweb="popover"] [role="listbox"],
+[data-baseweb="popover"] ul[role="listbox"] {
+    background: var(--c-surface) !important;
+    border: 1px solid var(--c-border) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+[data-baseweb="popover"] [role="option"] {
+    background: var(--c-surface) !important;
+    color: var(--c-text) !important;
+}
+[data-baseweb="popover"] [role="option"]:hover,
+[data-baseweb="popover"] [role="option"][aria-selected="true"] {
+    background: var(--c-accent-light) !important;
+    color: var(--c-accent-on-bg) !important;
+}
+
+
+/* ── Radio / toggle ──────────────────────────────────────────────────── */
+/* The option text sits in a child <div>/<p> that BaseWeb colours from the
+   (light) native theme, so it must be targeted directly — colouring only the
+   <label> leaves the text near-invisible on dark. */
+[data-testid="stRadio"] label,
+[data-testid="stRadio"] [role="radiogroup"] label,
+[data-testid="stRadio"] [role="radiogroup"] label div,
+[data-testid="stRadio"] [role="radiogroup"] label p {
+    color: var(--c-text) !important;
+    font-size: 0.83rem !important;
+    cursor: pointer;
+    transition: color var(--motion-fast) var(--motion-ease);
+}
+
+[data-testid="stRadio"] label:hover {
+    color: var(--c-accent-on-bg) !important;
+}
+
+/* The unselected radio marker is a BaseWeb circle that defaults to a light
+   fill — recolour it so it reads on dark surfaces. */
+[data-testid="stRadio"] [role="radiogroup"] [data-baseweb="radio"] > div:first-child {
+    background-color: var(--c-surface) !important;
+    border-color: var(--c-border-strong) !important;
+}
+
+[data-testid="stToggle"] p {
+    color: var(--c-text-secondary) !important;
+    font-size: 0.83rem !important;
+}
+
+
+/* ── Dataframe & editor ──────────────────────────────────────────────── */
+[data-testid="stDataFrame"],
+[data-testid="stDataEditor"] {
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-md) !important;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    background: var(--c-surface);
+}
+
+
+/* ── Expander ────────────────────────────────────────────────────────── */
+[data-testid="stExpander"] {
+    background: var(--c-surface) !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-sm);
+}
+
+[data-testid="stExpander"] summary {
+    background: var(--c-surface) !important;
+    color: var(--c-text-secondary) !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+[data-testid="stExpander"] summary:hover {
+    color: var(--c-accent-on-bg) !important;
+}
+
+/* Expander body shares the surface so it doesn't flash white behind content. */
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+    background: var(--c-surface) !important;
+}
+
+
+/* ── Alerts ──────────────────────────────────────────────────────────── */
+[data-testid="stAlert"] {
+    border-radius: var(--radius-md) !important;
+    font-size: 0.86rem !important;
+    border-left-width: 4px !important;
+}
+
+
+/* ── Markdown inline code ────────────────────────────────────────────── */
+/* Streamlit's inline `code` defaults to a light chip themed from its base, so
+   it shows as a white pill on dark. Re-skin to a token chip. The changelog
+   timeline's own `code` rule is more specific and still wins. */
+[data-testid="stMarkdownContainer"] code {
+    background: var(--c-bg-2) !important;
+    color: var(--c-accent-on-bg) !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-sm);
+    padding: 1px 5px;
+    font-size: 0.82em;
+}
+
+
+/* ── Markdown tables ─────────────────────────────────────────────────── */
+.block-container table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.82rem;
+    background: var(--c-surface);
+}
+
+.block-container th {
+    background: var(--c-bg-3) !important;
+    color: var(--c-text-secondary) !important;
+    font-weight: 700 !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--c-border-strong);
+    text-align: left;
+}
+
+.block-container td {
+    color: var(--c-text);
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--c-border);
+}
+
+.block-container tr:last-child td { border-bottom: none; }
+.block-container tr:hover td { background: var(--c-accent-light); }
+
+
+/* ── Toast ───────────────────────────────────────────────────────────── */
+[data-testid="stToast"] {
+    background: var(--c-surface) !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-md) !important;
+    color: var(--c-text) !important;
+    font-size: 0.83rem !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+
+/* ── Scrollbar ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--c-bg-2); }
+::-webkit-scrollbar-thumb {
+    background: var(--c-border-strong);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--c-accent); }
+
+
+/* ── Footer (hide Streamlit default) ─────────────────────────────────── */
+footer {
+    visibility: hidden !important;
+    display: none !important;
+}
+
+
+/* ── Selection ───────────────────────────────────────────────────────── */
+::selection {
+    background: var(--c-accent-mid);
+    color: var(--c-text);
+}
+
+
+/* ── Idle-Watchdog Continue Button (hidden) ──────────────────────────── */
+.st-key-idle_continue_container {
+    display: none !important;
+}
+
+/* ── Idle-Watchdog Component (hidden) ────────────────────────────────────
+   The watchdog renders via components.html(height=0). Even at height 0 the
+   element row + vertical-block gap leaves an empty box above the page title.
+   Collapse it; the iframe script still runs while display:none. */
+.st-key-idle_watchdog_container {
+    display: none !important;
+}
+
+
+/* ── Sidebar page navigation ─────────────────────────────────────────── */
+[data-testid="stSidebarNav"] {
+    padding: var(--space-1) var(--space-1) var(--space-3) var(--space-1) !important;
+    margin-bottom: var(--space-3) !important;
+    border-bottom: 1px solid var(--c-border) !important;
+}
+
+[data-testid="stSidebarNav"] ul {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+[data-testid="stSidebarNav"] li {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+[data-testid="stSidebarNav"] a {
+    display: flex !important;
+    align-items: center !important;
+    gap: var(--space-2) !important;
+    padding: var(--space-2) var(--space-3) !important;
+    border-radius: var(--radius-sm) !important;
+    border-left: 3px solid transparent !important;
+    color: var(--c-text-secondary) !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    text-decoration: none !important;
+    background: transparent !important;
+    transition: background var(--motion-fast) var(--motion-ease),
+                color var(--motion-fast) var(--motion-ease),
+                border-color var(--motion-fast) var(--motion-ease);
+}
+
+[data-testid="stSidebarNav"] a > * {
+    border-top: none !important;
+    text-decoration: none !important;
+}
+
+[data-testid="stSidebarNav"] a:hover {
+    background: var(--c-accent-light) !important;
+    color: var(--c-accent-on-bg) !important;
+}
+
+[data-testid="stSidebarNav"] a[aria-current="page"],
+[data-testid="stSidebarNav"] a[aria-current="true"] {
+    background: var(--c-accent-light) !important;
+    border-left-color: var(--c-accent) !important;
+    color: var(--c-accent-on-bg) !important;
+    font-weight: 600 !important;
+}
+
+[data-testid="stSidebarNav"] a span {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 1.05rem !important;
+    line-height: 1 !important;
+}
+
+
+/* ╔═══ 4. COMPONENT CLASSES (ms-*) ══════════════════════════════════════╗ */
+
+/* ── Hero ────────────────────────────────────────────────────────────── */
+.st-key-admin_hero,
+.st-key-ms_hero {
+    background: linear-gradient(135deg, var(--c-bg-3) 0%, var(--c-surface) 100%) !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--space-5) var(--space-6) !important;
+    margin-bottom: var(--space-4) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.ms-hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+.ms-hero__body { flex: 1 1 auto; min-width: 0; }
+.ms-hero__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-1) 0 !important;
+    color: var(--c-text) !important;
+    font-family: var(--font-body) !important;
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+}
+.ms-hero__icon {
+    font-size: 1.45rem;
+    line-height: 1;
+}
+.ms-hero__subtitle {
+    margin: 0 !important;
+    color: var(--c-text-secondary) !important;
+    font-size: 0.92rem !important;
+    line-height: 1.5;
+}
+.ms-hero__chip-wrap { flex-shrink: 0; }
+
+
+/* ── Chip / badge ────────────────────────────────────────────────────── */
+.ms-chip {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-body);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    white-space: nowrap;
+    line-height: 1.4;
+    margin-right: var(--space-1);
+}
+
+.ms-chip--accent {
+    background: var(--c-accent);
+    color: var(--c-text-inverse);
+    border-color: var(--c-accent);
+}
+.ms-chip--success {
+    background: var(--c-valid-bg);
+    color: var(--c-valid-text);
+    border-color: var(--c-valid-border);
+}
+.ms-chip--warn {
+    background: var(--c-warn-bg);
+    color: var(--c-warn-text);
+    border-color: var(--c-warn-border);
+}
+.ms-chip--danger {
+    background: var(--c-invalid-bg);
+    color: var(--c-invalid-text);
+    border-color: var(--c-invalid-border);
+}
+.ms-chip--info {
+    background: var(--c-info-bg);
+    color: var(--c-info-text);
+    border-color: var(--c-info-border);
+}
+.ms-chip--neutral {
+    background: var(--c-bg-2);
+    color: var(--c-text-secondary);
+    border-color: var(--c-border);
+}
+
+
+/* ── KPI row container ───────────────────────────────────────────────── */
+[class*="st-key-admin_kpi_row"] [data-testid="stMetric"],
+[class*="st-key-kpi_row"] [data-testid="stMetric"] {
+    background: var(--c-surface) !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--space-4) var(--space-4) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+[class*="st-key-admin_kpi_row"] [data-testid="stMetric"] [data-testid="stMetricLabel"],
+[class*="st-key-kpi_row"] [data-testid="stMetric"] [data-testid="stMetricLabel"] {
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: var(--c-text-muted) !important;
+}
+
+[class*="st-key-admin_kpi_row"] [data-testid="stMetric"] [data-testid="stMetricValue"],
+[class*="st-key-kpi_row"] [data-testid="stMetric"] [data-testid="stMetricValue"] {
+    font-size: 1.7rem !important;
+    font-weight: 700 !important;
+    color: var(--c-text) !important;
+}
+
+
+/* ── Empty state ─────────────────────────────────────────────────────── */
+.ms-empty {
+    text-align: center;
+    background: var(--c-bg-2);
+    border: 1.5px dashed var(--c-border-strong);
+    border-radius: var(--radius-md);
+    margin: var(--space-2) 0;
+    color: var(--c-text-secondary);
+    transition: border-color var(--motion-med) var(--motion-ease),
+                background var(--motion-med) var(--motion-ease);
+}
+.ms-empty--sm { padding: var(--space-4) var(--space-3); }
+.ms-empty--md { padding: var(--space-8) var(--space-4); }
+.ms-empty--lg { padding: var(--space-10) var(--space-6); }
+
+.ms-empty__icon {
+    font-size: 2.2rem;
+    margin-bottom: var(--space-2);
+    line-height: 1;
+}
+.ms-empty--lg .ms-empty__icon { font-size: 3rem; margin-bottom: var(--space-3); }
+
+.ms-empty__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--c-text-secondary);
+    margin-bottom: var(--space-1);
+}
+.ms-empty__body {
+    font-size: 0.84rem;
+    color: var(--c-text-muted);
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+
+/* ── Pagination counter ──────────────────────────────────────────────── */
+.ms-pager__counter {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--c-text-secondary);
+    padding-top: var(--space-2);
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ── Fallback logo ───────────────────────────────────────────────────── */
+.ms-fallback-logo {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-2) 0 var(--space-1) 0;
+    margin-bottom: var(--space-3);
+}
+.ms-fallback-logo__icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    margin-bottom: var(--space-1);
+}
+.ms-fallback-logo__name {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--c-accent);
+    line-height: 1.1;
+}
+.ms-fallback-logo__tagline {
+    font-size: 0.68rem;
+    color: var(--c-text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: var(--space-1);
+}
+
+
+/* ── Reference card (Matrix Guide redesign) ──────────────────────────── */
+.ms-refcard {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-left: 4px solid var(--c-accent);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-bottom: var(--space-3);
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow var(--motion-fast) var(--motion-ease),
+                transform var(--motion-fast) var(--motion-ease);
+}
+.ms-refcard:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+}
+.ms-refcard--success { border-left-color: var(--c-valid-strong); }
+.ms-refcard--warn    { border-left-color: var(--c-warn-strong); }
+.ms-refcard--info    { border-left-color: var(--c-info-strong); }
+.ms-refcard--neutral { border-left-color: var(--c-border-strong); }
+
+.ms-refcard__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+.ms-refcard__icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+.ms-refcard__title {
+    margin: 0 !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: var(--c-text) !important;
+    letter-spacing: 0.01em;
+}
+
+.ms-refcard__rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+.ms-refcard__row {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--space-2);
+    padding: 2px 0;
+    font-size: 0.83rem;
+    line-height: 1.45;
+}
+.ms-refcard__label {
+    color: var(--c-text-secondary);
+    font-weight: 600;
+    white-space: nowrap;
+}
+.ms-refcard__value {
+    color: var(--c-text);
+}
+.ms-refcard__hint {
+    grid-column: 1 / -1;
+    color: var(--c-text-muted);
+    font-size: 0.76rem;
+    margin-top: 2px;
+}
+.ms-refcard__footnote {
+    margin-top: var(--space-3);
+    padding-top: var(--space-2);
+    border-top: 1px dashed var(--c-border);
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+    line-height: 1.5;
+}
+
+
+/* ── Changelog timeline ──────────────────────────────────────────────── */
+.ms-changelog {
+    position: relative;
+    margin: var(--space-3) 0 var(--space-4);
+}
+.ms-changelog__release {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: var(--space-3);
+}
+/* The rail draws the continuous vertical line; the dot sits on top. */
+.ms-changelog__rail {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+.ms-changelog__rail::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--c-border);
+}
+/* Trim the line so it starts at the first dot and ends at the last. */
+.ms-changelog__release:first-child .ms-changelog__rail::before { top: 16px; }
+.ms-changelog__release:last-child  .ms-changelog__rail::before {
+    bottom: auto;
+    height: 16px;
+}
+.ms-changelog__dot {
+    position: relative;
+    z-index: 1;
+    width: 12px;
+    height: 12px;
+    margin-top: 11px;
+    border-radius: 50%;
+    background: var(--c-surface);
+    border: 2px solid var(--c-border-strong);
+}
+.ms-changelog__release--latest .ms-changelog__dot {
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 4px var(--c-accent-light);
+}
+
+.ms-changelog__card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    margin-bottom: var(--space-4);
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow var(--motion-fast) var(--motion-ease),
+                transform var(--motion-fast) var(--motion-ease);
+}
+.ms-changelog__card:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+}
+.ms-changelog__release--latest .ms-changelog__card {
+    border-color: var(--c-accent-mid);
+}
+
+.ms-changelog__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px dashed var(--c-border);
+}
+.ms-changelog__version {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--c-text);
+}
+.ms-changelog__date {
+    margin-left: auto;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--c-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.ms-changelog__sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+.ms-changelog__group {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: var(--space-3);
+    align-items: start;
+}
+.ms-changelog__group .ms-chip { margin-top: 2px; }
+
+.ms-changelog__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+.ms-changelog__items li {
+    position: relative;
+    padding-left: var(--space-4);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--c-text-secondary);
+}
+.ms-changelog__items li::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 0.6em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c-border-strong);
+}
+.ms-changelog__items code {
+    font-family: var(--font-mono);
+    font-size: 0.78em;
+    background: var(--c-bg-2);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    padding: 1px 5px;
+    color: var(--c-accent-on-bg);
+}
+.ms-changelog__items strong {
+    color: var(--c-text);
+    font-weight: 700;
+}
+
+/* Narrow screens: stack the category chip above its items. */
+@media (max-width: 640px) {
+    .ms-changelog__group {
+        grid-template-columns: 1fr;
+        gap: var(--space-1);
+    }
+}
+
+
+/* ── Data table (themed HTML alternative to st.dataframe) ────────────── */
+.ms-table-wrap {
+    overflow: auto;
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    background: var(--c-surface);
+    margin: var(--space-2) 0;
+}
+.ms-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    font-size: 0.82rem;
+    color: var(--c-text);
+    background: var(--c-surface);
+}
+.ms-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--c-bg-3);
+    color: var(--c-text-secondary);
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--c-border);
+    white-space: nowrap;
+}
+.ms-table td {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--c-border-subtle);
+    white-space: nowrap;
+}
+.ms-table tbody tr:last-child td { border-bottom: none; }
+.ms-table tbody tr:not([class*="ms-row--"]):hover td { background: var(--c-bg-2); }
+
+/* Severity-toned rows — theme-aware token pairs applied on the <td> (so they
+   win over the table's inherited text colour) → AA-legible in light AND dark. */
+.ms-table tr.ms-row--valid td {
+    background: var(--c-valid-bg) !important;
+    color: var(--c-valid-text) !important;
+}
+.ms-table tr.ms-row--invalid td {
+    background: var(--c-invalid-bg) !important;
+    color: var(--c-invalid-text) !important;
+}
+.ms-table tr.ms-row--warn td {
+    background: var(--c-warn-bg) !important;
+    color: var(--c-warn-text) !important;
+}
+.ms-table tr.ms-row--neutral td {
+    background: var(--c-bg-2) !important;
+}
+.ms-table tbody tr[class*="ms-row--"]:hover td { filter: brightness(1.05); }
+
+.ms-table th.ms-num,
+.ms-table td.ms-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+.ms-table th.ms-center,
+.ms-table td.ms-center { text-align: center; }
+
+/* Pinned (sticky) column — keeps a solid fill so scrolled cells don't bleed
+   through underneath it. */
+.ms-table th.ms-table__sticky,
+.ms-table td.ms-table__sticky {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--c-surface);
+}
+.ms-table thead th.ms-table__sticky {
+    z-index: 3;
+    background: var(--c-bg-3);
+}
+
+
+/* ── Log Viewer — Telescope dashboard ────────────────────────────────── */
+/* Time-distribution histogram panel — sits under the KPI row, framed as a
+   surface band like Telescope's chart strip. */
+.st-key-logv_hist {
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    background: var(--c-surface);
+    padding: var(--space-3) var(--space-3) var(--space-2);
+    box-shadow: var(--shadow-xs);
+    margin-bottom: var(--space-3);
+}
+
+/* Full-width selectable log grid. The grid body is canvas-rendered (its
+   chrome can't follow the data-theme toggle), so we only tidy the wrapper:
+   round the corners and drop Streamlit's default bottom margin so the detail
+   card below sits close. */
+.st-key-logv_grid {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+.st-key-logv_grid [data-testid="stDataFrame"] {
+    border-radius: var(--radius-md);
+}
+
+/* The Telescope entry-detail card (rendered full width below the grid). */
+.ms-logdetail {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-left: 4px solid var(--c-border-strong);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-xs);
+}
+.ms-logdetail--danger { border-left-color: var(--c-invalid-strong); }
+.ms-logdetail--warn   { border-left-color: var(--c-warn-strong); }
+.ms-logdetail--info   { border-left-color: var(--c-info-strong); }
+.ms-logdetail--neutral { border-left-color: var(--c-border-strong); }
+
+/* Tag-coded header: level pill + logger name + right-pinned timestamp. */
+.ms-logdetail__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--c-border);
+}
+.ms-logdetail__level {
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+.ms-logdetail__logger {
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--c-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+.ms-logdetail__ts {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Metadata key/value grid. */
+.ms-logdetail__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+.ms-logdetail__row {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    gap: var(--space-2);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    padding: 3px 0;
+    border-bottom: 1px dashed var(--c-border);
+}
+.ms-logdetail__row:last-child { border-bottom: 0; }
+.ms-logdetail__k {
+    color: var(--c-text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.72rem;
+    align-self: center;
+}
+.ms-logdetail__v {
+    color: var(--c-text);
+    font-family: var(--font-mono);
+    word-break: break-all;
+}
+
+/* Payload caption bar — sits directly above the message code block. */
+.ms-logdetail__msgbar {
+    display: flex;
+    align-items: center;
+    margin-top: var(--space-3);
+}
+.ms-logdetail__msglabel {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--c-text-muted);
+}
+
+/* Tighten the gap between the detail card and the st.code message block so
+   they read as one unit, and theme the code block to our tokens. The message
+   is rendered with st.code (not a raw <pre>): it survives multi-line payloads,
+   carries a built-in copy button, and stays inside Streamlit's XSS-safe text
+   path. */
+.st-key-ms_logdetail,
+.st-key-ms_changedetail {
+    gap: var(--space-2);
+}
+/* Selector covers both the current ([data-testid="stCode"]) and older
+   (.stCodeBlock) st.code DOM, plus a bare-element fallback — the only <pre>
+   inside this container is the message block. Shared by the Log Viewer's
+   log_detail card and the Application Changes change_detail card. */
+.st-key-ms_logdetail pre,
+.st-key-ms_changedetail pre {
+    margin: 0;
+    background: var(--c-bg-2);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    max-height: 360px;
+    overflow: auto;
+}
+.st-key-ms_logdetail pre code,
+.st-key-ms_changedetail pre code {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.55;
+    /* language=None → no highlighting, so a single token colour is correct
+       and keeps the payload AA-legible in both themes. */
+    color: var(--c-text);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+
+/* ── Code chip grid (Shift Codes redesign) ───────────────────────────── */
+.ms-codegrid {
+    display: grid;
+    grid-template-columns: repeat(var(--ms-codegrid-cols, 4), minmax(0, 1fr));
+    gap: var(--space-3);
+    margin: var(--space-2) 0;
+}
+
+@media (max-width: 900px) {
+    .ms-codegrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.ms-codechip {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    text-align: center;
+    box-shadow: var(--shadow-xs);
+    transition: transform var(--motion-fast) var(--motion-ease),
+                box-shadow var(--motion-fast) var(--motion-ease),
+                border-color var(--motion-fast) var(--motion-ease);
+}
+.ms-codechip:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--c-accent);
+}
+.ms-codechip--accent  { border-top: 3px solid var(--c-accent); }
+.ms-codechip--success { border-top: 3px solid var(--c-valid-strong); }
+.ms-codechip--warn    { border-top: 3px solid var(--c-warn-strong); }
+.ms-codechip--info    { border-top: 3px solid var(--c-info-strong); }
+.ms-codechip--danger  { border-top: 3px solid var(--c-invalid-strong); }
+.ms-codechip--neutral { border-top: 3px solid var(--c-border-strong); }
+
+.ms-codechip__code {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--c-text);
+    letter-spacing: 0;
+    line-height: 1.1;
+}
+.ms-codechip__hours {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--c-text-secondary);
+    margin-top: var(--space-1);
+}
+.ms-codechip__window {
+    font-size: 0.72rem;
+    color: var(--c-text-muted);
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ── Violation card ──────────────────────────────────────────────────── */
+.ms-violcard {
+    position: relative;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-5);
+    margin-bottom: var(--space-3);
+    box-shadow: var(--shadow-xs);
+    overflow: hidden;
+    transition: box-shadow var(--motion-fast) var(--motion-ease);
+}
+.ms-violcard:hover { box-shadow: var(--shadow-sm); }
+
+.ms-violcard__ribbon {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+}
+.ms-violcard--invalid .ms-violcard__ribbon { background: var(--c-invalid-strong); }
+.ms-violcard--warning .ms-violcard__ribbon { background: var(--c-warn-strong); }
+
+.ms-violcard__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+    flex-wrap: wrap;
+}
+.ms-violcard__who {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    min-width: 0;
+}
+.ms-violcard__name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-text);
+}
+.ms-violcard__id,
+.ms-violcard__station {
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+}
+.ms-violcard__sep {
+    color: var(--c-text-muted);
+}
+.ms-violcard__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.ms-violcard__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.ms-violcard__item {
+    display: grid;
+    grid-template-columns: minmax(140px, max-content) 1fr;
+    gap: var(--space-3);
+    padding: 6px 0;
+    border-top: 1px dashed var(--c-border-subtle);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+.ms-violcard__item:first-child { border-top: none; }
+.ms-violcard__type {
+    color: var(--c-text-secondary);
+    font-weight: 600;
+}
+.ms-violcard--invalid .ms-violcard__type { color: var(--c-invalid-text); }
+.ms-violcard--warning .ms-violcard__type { color: var(--c-warn-text); }
+.ms-violcard__detail {
+    color: var(--c-text);
+    word-break: break-word;
+}
+.ms-violcard__why {
+    grid-column: 1 / -1;
+    margin-top: var(--space-1);
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+}
+.ms-violcard__why summary {
+    cursor: pointer;
+    color: var(--c-accent-on-bg);
+    font-weight: 600;
+}
+
+
+/* ── Danger zone ─────────────────────────────────────────────────────── */
+.st-key-admin_danger_zone,
+[class*="st-key-admin_danger_zone"] {
+    background: var(--c-invalid-bg) !important;
+    border: 1px solid var(--c-invalid-border) !important;
+    border-left: 4px solid var(--c-invalid-strong) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--space-4) var(--space-5) !important;
+    margin-top: var(--space-6) !important;
+}
+.st-key-admin_danger_zone h3,
+.st-key-admin_danger_zone h4,
+[class*="st-key-admin_danger_zone"] h3,
+[class*="st-key-admin_danger_zone"] h4,
+.ms-danger__title {
+    color: var(--c-invalid-strong) !important;
+    margin-top: 0 !important;
+}
+.ms-danger__title {
+    font-size: 0.98rem !important;
+    font-weight: 700 !important;
+    margin-bottom: var(--space-2) !important;
+}
+.ms-danger__body {
+    color: var(--c-text-secondary);
+    font-size: 0.86rem;
+    line-height: 1.5;
+    margin: 0;
+}
+/* The validation-defaults danger zone uses plain st.markdown (not
+   .ms-danger__body), whose body text falls back to Streamlit's light-theme
+   dark colour → invisible on the dark-red panel. Force a readable token. */
+[class*="st-key-admin_danger_zone"] [data-testid="stMarkdownContainer"] p {
+    color: var(--c-text-secondary) !important;
+}
+
+
+/* ── Sidebar section label ───────────────────────────────────────────── */
+.ms-sidesection {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-2);
+}
+.ms-sidesection__icon {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+.ms-sidesection__label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--c-text-secondary);
+    letter-spacing: 0.04em;
+}
+
+
+/* ── Log viewer filter bar ───────────────────────────────────────────── */
+.st-key-logv_filterbar {
+    background: var(--c-bg-2) !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--radius-md) !important;
+    padding: var(--space-3) var(--space-4) !important;
+    margin-bottom: var(--space-2) !important;
+}
+
+
+/* ╔═══ 5. REDUCED-MOTION OVERRIDE (must come last) ═══════════════════════╗ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+    [data-testid="stMetric"]:hover,
+    .ms-refcard:hover,
+    .ms-changelog__card:hover,
+    .ms-codechip:hover,
+    [data-testid="baseButton-primary"]:hover,
+    button[kind="primary"]:hover {
+        transform: none !important;
+    }
+}

@@ -1,0 +1,52 @@
+[project]
+name = "manning-simulator"
+version = "1.9.1"
+description = "Manning Simulator — Streamlit workforce schedule validator with Keycloak SSO."
+requires-python = ">=3.10"
+readme = "README.md"
+
+# Dev/test tooling — NOT installed on the IIS-deployed runtime (production uses
+# requirements.txt only). Install with:  pip install -e ".[dev]"
+# After installing playwright, fetch the browser:  python -m playwright install chromium
+[project.optional-dependencies]
+dev = [
+    "pytest>=9",
+    "playwright>=1.60",
+    "ruff",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = [
+    "scripts/patch_keycloak_bundle.py",  # vendor-patching script; intentionally non-conforming
+    "test_data",
+    "logs",
+    "certs",
+    "resource",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes (unused imports, undefined names)
+    "I",   # isort (import sorting)
+    "B",   # bugbear (likely bugs)
+    "W",   # pycodestyle warnings
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line-too-long: pragmatic; long f-strings in render code are clearer than wrapped
+    "B008",  # function-call-in-default-argument: Streamlit widgets use this idiomatically
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-q"
+filterwarnings = [
+    "ignore::DeprecationWarning:streamlit.*",
+]

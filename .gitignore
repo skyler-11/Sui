@@ -1,0 +1,74 @@
+# ════════════════════════════════════════════════════════════════════════════
+# Manning Simulator — .gitignore
+# ════════════════════════════════════════════════════════════════════════════
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# ── Virtual environments ─────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Distribution / packaging ─────────────────────────────────────────────
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# ── Testing / linting caches ─────────────────────────────────────────────
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# ── IDE / editor ──────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Streamlit secrets (may contain Keycloak client secrets / tokens) ─────
+.streamlit/secrets.toml
+
+# ── Certificates (sensitive — do not publish) ────────────────────────────
+certs/
+
+# ── Company branding (proprietary logo — do not publish) ─────────────────
+icon/
+
+# ── Logs (runtime-generated, contain user activity) ──────────────────────
+app/logs/
+*.log
+
+# ── Runtime artifacts ────────────────────────────────────────────────────
+streamlit.pid
+
+# ── OS junk ──────────────────────────────────────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# ── Infra-specific scripts (contain internal hostnames / Keycloak URLs) ──
+run_streamlit.bat
+RunAppInvisibility.vbs
+
+# ── Agent / AI context files ─────────────────────────────────────────────
+.claude/
+CLAUDE.md
+*.context-dump*
+Manning Context dump.txt
+
+# ── Misc ─────────────────────────────────────────────────────────────────
+*.bak
+*.tmp
+*.orig

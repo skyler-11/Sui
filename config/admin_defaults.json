@@ -1,0 +1,11 @@
+{
+  "_comment": "Org-wide default values for validation thresholds and active rules. Edited via the 'Admin: Validation Defaults' page (SuperAdmin only). Users can still override per-session via the sidebar sliders. Factory defaults below mirror the hardcoded values in Main.py and app/core/rules.py at the time this file was first generated.",
+  "_version": 1,
+  "thresholds": {
+    "max_week_hrs": 60,
+    "min_week_hrs": 48,
+    "max_rolling_7d_hrs": 60,
+    "nw_credit_hrs": 0
+  },
+  "active_rule_keys": null
+}

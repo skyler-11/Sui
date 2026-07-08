@@ -1,0 +1,46 @@
+# ════════════════════════════════════════════════════════════════════════════
+# Manning Simulator — Streamlit Configuration
+# ════════════════════════════════════════════════════════════════════════════
+# Checked into git. Environment-varying settings (XSRF, CORS) stay in
+# run_streamlit.bat because they flip per MANNING_ENV.
+# Secrets live in .streamlit/secrets.toml (gitignored).
+# ════════════════════════════════════════════════════════════════════════════
+
+[client]
+toolbarMode = "minimal"
+showErrorDetails = false
+
+
+[server]
+# Streamlit binds here; IIS ARR reverse-proxies :6091 -> :4444.
+address  = "127.0.0.1"
+port     = 4444
+headless = true
+maxUploadSize = 5
+maxMessageSize = 50
+enableStaticServing = false
+
+[runner]
+fastReruns = true
+
+
+[browser]
+gatherUsageStats = false
+
+
+[logger]
+level = "info"
+
+
+# Single-theme (light). A runtime light/dark toggle isn't viable in Streamlit —
+# the canvas data-grid + its dropdowns are painted from this static native theme
+# and can't follow a CSS toggle. run_streamlit.bat also sets STREAMLIT_THEME_*
+# env vars (which override this file) so the theme deploys even though this file
+# is gitignored/local.
+[theme]
+base                = "light"
+primaryColor        = "#F24713"
+backgroundColor     = "#F8FAFC"
+secondaryBackgroundColor = "#FFFFFF"
+textColor           = "#0F172A"
+font                = "sans serif"

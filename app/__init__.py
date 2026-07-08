@@ -1,0 +1,1 @@
+"""Manning Simulator application package."""
